@@ -1,0 +1,85 @@
+import yfinance as yf
+
+class Stock:
+    def __init__(self, symbol, shares):
+        self.symbol = symbol
+        self.shares = shares
+        self.data = None
+        self.update_data()
+
+    def update_data(self):
+        self.data = yf.Ticker(self.symbol).history(period="1d")
+
+    def current_price(self):
+        if self.data is not None:
+            return self.data['Close'].iloc[-1]
+        else:
+            return None
+
+    def total_value(self):
+        price = self.current_price()
+        if price is not None:
+            return price * self.shares
+        else:
+            return None
+
+class Portfolio:
+    def __init__(self):
+        self.stocks = []
+
+    def add_stock(self, symbol, shares):
+        self.stocks.append(Stock(symbol, shares))
+
+    def remove_stock(self, symbol):
+        for stock in self.stocks:
+            if stock.symbol == symbol:
+                self.stocks.remove(stock)
+                return True
+        return False
+
+    def total_value(self):
+        total = 0
+        for stock in self.stocks:
+            value = stock.total_value()
+            if value is not None:
+                total += value
+        return total
+
+if __name__ == "__main__":
+    portfolio = Portfolio()
+
+    while True:
+        print("\nStock Portfolio Tracking Tool")
+        print("1. Add Stock")
+        print("2. Remove Stock")
+        print("3. View Portfolio")
+        print("4. Quit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            symbol = input("Enter stock symbol: ")
+            shares = float(input("Enter number of shares: "))
+            portfolio.add_stock(symbol, shares)
+            print("Stock added successfully!")
+
+        elif choice == "2":
+            symbol = input("Enter stock symbol to remove: ")
+            if portfolio.remove_stock(symbol):
+                print("Stock removed successfully!")
+            else:
+                print("Stock not found in portfolio.")
+
+        elif choice == "3":
+            print("\nCurrent Portfolio:")
+            for stock in portfolio.stocks:
+                print(f"{stock.symbol}: {stock.shares} shares - Current Value: ${stock.total_value()}")
+
+            print("\nTotal Portfolio Value:", portfolio.total_value())
+
+        elif choice == "4":
+            print("Exiting...")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
