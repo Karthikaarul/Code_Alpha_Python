@@ -1,0 +1,29 @@
+import random
+
+# Define responses for different types of inputs
+responses = {
+    "hello": ["Hello!", "Hi there!", "Hey!"],
+    "how are you": ["I'm good, thanks for asking!", "Doing well, how about you?"],
+    "what's your name": ["You can call me ChatBot.", "I'm ChatBot."],
+    "bye": ["Goodbye!", "See you later!", "Bye! Have a great day!"]
+}
+
+def get_response(message):
+    message = message.lower()  # Convert the input to lowercase for case insensitivity
+    for key in responses:
+        if message.startswith(key):
+            return random.choice(responses[key])
+    return "I'm sorry, I didn't understand that."
+
+def main():
+    print("Welcome! Type 'bye' to exit.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'bye':
+            print(get_response(user_input))
+            break
+        else:
+            print("ChatBot:", get_response(user_input))
+
+if __name__ == "__main__":
+    main()
